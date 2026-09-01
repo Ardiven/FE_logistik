@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://tps.petra.ac.id/logistik/api',
+  baseURL: 'https://tps.petra.ac.id/api',
 });
 
 API.interceptors.request.use((config) => {
