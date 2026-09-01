@@ -68,10 +68,10 @@ export default function LogisticsMatrixGrid() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {matrix.map((item) => (
             <div key={item.requestId || `${item.groupNumber}-${Math.random()}`} className={`bg-white rounded-xl shadow-sm border overflow-hidden flex flex-col ${item.hasRequest ? 'border-tps-orange/30' : 'border-gray-100 opacity-70'}`}>
-              <div className={`px-4 py-3 border-b flex justify-between items-center ${item.status === 'ASSIGNED' ? 'bg-green-50 border-green-100' : item.hasRequest ? 'bg-orange-50 border-orange-100' : 'bg-gray-50 border-gray-100'}`}>
+              <div className={`px-4 py-3 border-b flex justify-between items-center ${item.status?.toUpperCase() === 'ASSIGNED' ? 'bg-green-50 border-green-100' : item.hasRequest ? 'bg-orange-50 border-orange-100' : 'bg-gray-50 border-gray-100'}`}>
                 <h3 className="font-bold text-gray-800">KTB {String(item.groupNumber).padStart(2, '0')}</h3>
-                <span className={`text-xs font-bold px-2 py-1 rounded-full ${item.status === 'ASSIGNED' ? 'bg-green-200 text-green-800' : item.hasRequest ? 'bg-orange-200 text-orange-800' : 'bg-gray-200 text-gray-600'}`}>
-                  {item.status}
+                <span className={`text-xs font-bold px-2 py-1 rounded-full ${item.status?.toUpperCase() === 'ASSIGNED' ? 'bg-green-200 text-green-800' : item.hasRequest ? 'bg-orange-200 text-orange-800' : 'bg-gray-200 text-gray-600'}`}>
+                  {item.status?.toUpperCase()}
                 </span>
               </div>
               
@@ -86,7 +86,7 @@ export default function LogisticsMatrixGrid() {
                       </div>
                     </div>
                     
-                    {item.status === 'ASSIGNED' ? (
+                    {item.status?.toUpperCase() === 'ASSIGNED' ? (
                       <div className="space-y-2">
                         <div className="flex items-start gap-2 text-sm text-gray-600 bg-green-50 p-2 rounded-lg border border-green-100">
                           <MapPin className="w-4 h-4 mt-0.5 text-green-500 shrink-0" />
