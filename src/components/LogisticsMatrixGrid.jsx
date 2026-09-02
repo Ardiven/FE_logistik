@@ -114,11 +114,11 @@ export default function LogisticsMatrixGrid() {
                       </div>
                     ) : item.status?.toUpperCase() === 'PROSES' ? (
                       <div className="space-y-2 mt-2">
-                        {item.processedByName && (
+                        {item.assignedByName && (
                           <div className="flex items-start gap-2 text-xs text-gray-500 bg-blue-50 p-2 rounded-lg border border-blue-100 mb-2">
                             <User className="w-3.5 h-3.5 mt-0.5 text-blue-500 shrink-0" />
                             <div>
-                              <p>Diproses oleh: <span className="font-medium text-blue-700">{item.processedByName}</span></p>
+                              <p>Diproses oleh: <span className="font-medium text-blue-700">{item.assignedByName}</span></p>
                             </div>
                           </div>
                         )}
