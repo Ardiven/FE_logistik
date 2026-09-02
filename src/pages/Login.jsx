@@ -6,7 +6,7 @@ import { KeyRound, User, Briefcase } from 'lucide-react';
 const Login = () => {
     const [nrp, setNrp] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('ASTOR');
+    const [role, setRole] = useState('KETUA_KELOMPOK');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     
@@ -72,7 +72,8 @@ const Login = () => {
                                         onChange={(e) => setRole(e.target.value)}
                                         className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-tps-orange focus:border-tps-orange transition-colors sm:text-sm bg-gray-50 hover:bg-white"
                                     >
-                                        <option value="ASTOR">Astor</option>
+                                        <option value="KETUA_KELOMPOK">Ketua Kelompok</option>
+                                        <option value="MENTOR">Mentor</option>
                                         <option value="LOGISTIK">Tim Logistik</option>
                                     </select>
                                 </div>

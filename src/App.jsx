@@ -33,7 +33,7 @@ const Navigation = () => {
               Ruang KTB
             </div>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
-              {user?.role === 'ASTOR' && (
+              {(user?.role === 'KETUA_KELOMPOK' || user?.role === 'MENTOR') && (
                 <Link to="/" className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-tps-orange text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
                   Form Peminjaman
                 </Link>
@@ -77,7 +77,7 @@ function App() {
           <main className="flex-grow w-full max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
             <Routes>
               <Route path="/login" element={<Login />} />
-              <Route path="/" element={<PrivateRoute allowedRoles={['ASTOR']}><FastBookForm /></PrivateRoute>} />
+              <Route path="/" element={<PrivateRoute allowedRoles={['KETUA_KELOMPOK', 'MENTOR']}><FastBookForm /></PrivateRoute>} />
               <Route path="/logistics" element={<PrivateRoute allowedRoles={['LOGISTIK']}><LogisticsMatrixGrid /></PrivateRoute>} />
             </Routes>
           </main>
