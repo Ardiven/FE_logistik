@@ -4,3 +4,4 @@
 # Allow these files
 !.gitignore
 !dist/
+!package.json
