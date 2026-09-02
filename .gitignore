@@ -1,6 +1,6 @@
-# Ignore everything in the root
-/*
+# Ignore everything
+*
 
-# But allow these files/folders
-!/.gitignore
-!/dist/
+# Allow these files
+!.gitignore
+!dist/
