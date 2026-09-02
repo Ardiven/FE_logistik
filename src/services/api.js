@@ -18,5 +18,5 @@ export const getGroups = () => API.get('/groups');
 export const submitRequest = (data) => API.post('/requests', data);
 export const getLogisticsMatrix = () => API.get(`/logistics/matrix?_t=${Date.now()}`);
 export const assignRoom = (id, data) => API.patch(`/logistics/requests/${id}/assign`, data);
-export const rejectRoom = (id) => API.patch(`/logistics/requests/${id}/reject`);
+export const rejectRoom = (id, data) => API.patch(`/logistics/requests/${id}/reject`, data);
 export const processRoom = (id) => API.patch(`/logistics/requests/${id}/process`);

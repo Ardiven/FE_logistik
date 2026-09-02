@@ -33,9 +33,14 @@ export default function LogisticsMatrixGrid() {
   };
 
   const handleReject = async (id) => {
-    if (window.confirm('Yakin ingin menolak permohonan ini?')) {
+    const reason = window.prompt('Masukkan alasan penolakan permohonan ini (wajib):');
+    if (reason !== null) {
+      if (reason.trim() === '') {
+        alert('Alasan penolakan wajib diisi.');
+        return;
+      }
       try {
-        await rejectRoom(id);
+        await rejectRoom(id, { reason });
         fetchMatrix();
       } catch (err) {
         alert('Gagal menolak permohonan.');
@@ -78,7 +83,7 @@ export default function LogisticsMatrixGrid() {
           {matrix.map((item) => (
             <div key={item.requestId || `${item.groupNumber}-${Math.random()}`} className={`bg-white rounded-xl shadow-sm border overflow-hidden flex flex-col ${item.hasRequest ? 'border-tps-orange/30' : 'border-gray-100 opacity-70'}`}>
               <div className={`px-4 py-3 border-b flex justify-between items-center ${item.status?.toUpperCase() === 'ASSIGNED' ? 'bg-green-50 border-green-100' : item.status?.toUpperCase() === 'PROSES' ? 'bg-blue-50 border-blue-100' : item.hasRequest ? 'bg-orange-50 border-orange-100' : 'bg-gray-50 border-gray-100'}`}>
-                <h3 className="font-bold text-gray-800">KTB {String(item.groupNumber).padStart(2, '0')}</h3>
+                <h3 className="font-bold text-gray-800">KTB {item.groupName}</h3>
                 <span className={`text-xs font-bold px-2 py-1 rounded-full ${item.status?.toUpperCase() === 'ASSIGNED' ? 'bg-green-200 text-green-800' : item.status?.toUpperCase() === 'PROSES' ? 'bg-blue-200 text-blue-800' : item.hasRequest ? 'bg-orange-200 text-orange-800' : 'bg-gray-200 text-gray-600'}`}>
                   {item.status?.toUpperCase()}
                 </span>
