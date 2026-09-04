@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://tps.petra.ac.id/api',
+  // baseURL: 'https://tps.petra.ac.id/api',
+  baseURL: 'http://localhost:3000/api',
 });
 
 API.interceptors.request.use((config) => {
@@ -20,3 +21,7 @@ export const getLogisticsMatrix = () => API.get(`/logistics/matrix?_t=${Date.now
 export const assignRoom = (id, data) => API.patch(`/logistics/requests/${id}/assign`, data);
 export const rejectRoom = (id, data) => API.patch(`/logistics/requests/${id}/reject`, data);
 export const processRoom = (id) => API.patch(`/logistics/requests/${id}/process`);
+export const getMyRequests = () => API.get('/requests/my');
+
+export const getSettings = () => API.get('/settings');
+export const updateSettings = (data) => API.put('/settings', data);

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, Check } from 'lucide-react';
 import { assignRoom } from '../services/api';
+import Swal from 'sweetalert2';
 
 export default function AssignRoomModal({ request, onClose, onSuccess }) {
   const [assignedRoom, setAssignedRoom] = useState('');
@@ -15,7 +16,7 @@ export default function AssignRoomModal({ request, onClose, onSuccess }) {
       onSuccess(res.data.data);
     } catch (err) {
       console.error(err);
-      alert('Gagal mengassign ruangan');
+      Swal.fire('Gagal!', 'Gagal mengassign ruangan.', 'error');
     } finally {
       setLoading(false);
     }

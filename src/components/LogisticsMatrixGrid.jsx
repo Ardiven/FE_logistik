@@ -1,13 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { getLogisticsMatrix, rejectRoom, processRoom } from '../services/api';
 import AssignRoomModal from './AssignRoomModal';
-import { Calendar, Search, MapPin, Clock, User } from 'lucide-react';
+import { Calendar, Search, MapPin, Clock, User, Lock, Settings } from 'lucide-react';
+import Swal from 'sweetalert2';
+import { AuthContext } from '../context/AuthContext';
+import EmailSettingsModal from './EmailSettingsModal';
 
 export default function LogisticsMatrixGrid() {
+  const { user } = useContext(AuthContext);
   const [matrix, setMatrix] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const fetchMatrix = () => {
     setLoading(true);
@@ -33,17 +38,29 @@ export default function LogisticsMatrixGrid() {
   };
 
   const handleReject = async (id) => {
-    const reason = window.prompt('Masukkan alasan penolakan permohonan ini (wajib):');
-    if (reason !== null) {
-      if (reason.trim() === '') {
-        alert('Alasan penolakan wajib diisi.');
-        return;
+    const { value: reason } = await Swal.fire({
+      title: 'Tolak Permohonan',
+      input: 'textarea',
+      inputLabel: 'Masukkan alasan penolakan permohonan ini (wajib):',
+      inputPlaceholder: 'Ketik alasan di sini...',
+      showCancelButton: true,
+      confirmButtonText: 'Tolak',
+      cancelButtonText: 'Batal',
+      confirmButtonColor: '#f44336',
+      inputValidator: (value) => {
+        if (!value || value.trim() === '') {
+          return 'Alasan penolakan wajib diisi!'
+        }
       }
+    });
+
+    if (reason) {
       try {
         await rejectRoom(id, { reason });
         fetchMatrix();
+        Swal.fire('Berhasil!', 'Permohonan telah ditolak.', 'success');
       } catch (err) {
-        alert('Gagal menolak permohonan.');
+        Swal.fire('Gagal!', 'Gagal menolak permohonan.', 'error');
       }
     }
   };
@@ -53,7 +70,7 @@ export default function LogisticsMatrixGrid() {
       await processRoom(id);
       fetchMatrix();
     } catch (err) {
-      alert(err);
+      Swal.fire('Gagal!', err.message || 'Terjadi kesalahan.', 'error');
     }
   };
 
@@ -68,6 +85,11 @@ export default function LogisticsMatrixGrid() {
         </div>
 
         <div className="flex items-center gap-3">
+          {(user?.teamRole === 'BPH' || user?.teamRole === 'BPHK') && (
+            <button onClick={() => setIsSettingsOpen(true)} className="p-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
+              <Settings className="w-4 h-4" /> <span className="text-sm font-semibold pr-1">Pengaturan Email</span>
+            </button>
+          )}
           <button onClick={fetchMatrix} className="p-2 bg-tps-orange text-white rounded-lg hover:bg-orange-600 transition-colors flex items-center gap-2">
             <Search className="w-4 h-4" /> <span className="text-sm font-semibold pr-1">Refresh Data</span>
           </button>
@@ -127,20 +149,27 @@ export default function LogisticsMatrixGrid() {
                             </div>
                           </div>
                         )}
-                        <div className="flex gap-2 w-full">
-                          <button
-                            onClick={() => setSelectedRequest(item)}
-                            className="flex-1 bg-tps-orange/10 hover:bg-tps-orange hover:text-white text-tps-orange text-sm font-semibold py-2 rounded-lg transition-colors border border-tps-orange/20"
-                          >
-                            Assign
-                          </button>
-                          <button
-                            onClick={() => handleReject(item.requestId)}
-                            className="flex-1 bg-red-50 hover:bg-red-500 hover:text-white text-red-500 text-sm font-semibold py-2 rounded-lg transition-colors border border-red-200 hover:border-red-500"
-                          >
-                            Tolak
-                          </button>
-                        </div>
+                        {item.processedByNrp !== user?.nrp ? (
+                          <div className="flex items-center gap-1.5 text-xs text-gray-400 justify-center py-2 bg-gray-50 rounded border border-gray-100">
+                            <Lock className="w-3.5 h-3.5" />
+                            <span>Terkunci (Diproses admin lain)</span>
+                          </div>
+                        ) : (
+                          <div className="flex gap-2 w-full">
+                            <button
+                              onClick={() => setSelectedRequest(item)}
+                              className="flex-1 bg-tps-orange/10 hover:bg-tps-orange hover:text-white text-tps-orange text-sm font-semibold py-2 rounded-lg transition-colors border border-tps-orange/20"
+                            >
+                              Assign
+                            </button>
+                            <button
+                              onClick={() => handleReject(item.requestId)}
+                              className="flex-1 bg-red-50 hover:bg-red-500 hover:text-white text-red-500 text-sm font-semibold py-2 rounded-lg transition-colors border border-red-200 hover:border-red-500"
+                            >
+                              Tolak
+                            </button>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="flex gap-2 w-full mt-2">
@@ -177,6 +206,11 @@ export default function LogisticsMatrixGrid() {
           onSuccess={handleAssignSuccess}
         />
       )}
+      
+      <EmailSettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+      />
     </div>
   );
 }

@@ -24,6 +24,43 @@ export default function FastBookForm() {
   const handleGroupChange = (e) => {
     const group = groups.find(g => g.id === parseInt(e.target.value));
     setSelectedGroup(group || null);
+
+    if (group && group.defaultDay !== null && group.defaultTime !== null) {
+      const rawDay = parseInt(group.defaultDay);
+      const jsDay = rawDay === 7 ? 0 : rawDay;
+      
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() + 3); // Min H-3
+      
+      while (targetDate.getDay() !== jsDay) {
+        targetDate.setDate(targetDate.getDate() + 1);
+      }
+      
+      const year = targetDate.getFullYear();
+      const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+      const day = String(targetDate.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
+      const startTimeStr = group.defaultTime.substring(0, 5);
+      
+      let endHour = parseInt(startTimeStr.split(':')[0]) + 2;
+      let endMinute = startTimeStr.split(':')[1];
+      if (endHour >= 24) endHour -= 24;
+      const endTimeStr = `${endHour.toString().padStart(2, '0')}:${endMinute}`;
+      
+      setFormData(prev => ({
+        ...prev,
+        requestedDate: dateStr,
+        startTime: startTimeStr,
+        endTime: endTimeStr
+      }));
+    } else if (group) {
+      setFormData(prev => ({
+        ...prev,
+        requestedDate: '',
+        startTime: '',
+        endTime: ''
+      }));
+    }
   };
 
   const handleChange = (e) => {
@@ -44,9 +81,6 @@ export default function FastBookForm() {
     try {
       const payload = {
         groupId: selectedGroup.id,
-        leaderName: selectedGroup.defaultLeaderName,
-        leaderContact: selectedGroup.defaultContact,
-        leaderEmail: selectedGroup.defaultEmail,
         ...formData
       };
       const res = await submitRequest(payload);
@@ -66,6 +100,13 @@ export default function FastBookForm() {
       setLoading(false);
     }
   };
+
+
+  const now = new Date();
+  const tYear = now.getFullYear();
+  const tMonth = String(now.getMonth() + 1).padStart(2, '0');
+  const tDay = String(now.getDate()).padStart(2, '0');
+  const todayDate = `${tYear}-${tMonth}-${tDay}`;
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-0">
@@ -105,7 +146,7 @@ export default function FastBookForm() {
             <div className="p-4 bg-tps-yellow/30 rounded-xl border border-tps-yellow/50">
               <p className="text-sm font-semibold text-gray-700 mb-1">Data Penanggung Jawab (Otomatis):</p>
               <div className="text-sm text-gray-600">
-                <span className="font-medium">{selectedGroup.defaultLeaderName}</span> • {selectedGroup.defaultContact}
+                <span className="font-medium">{selectedGroup.defaultMentorName}</span> • {selectedGroup.defaultContact}
               </div>
             </div>
           )}
@@ -117,9 +158,10 @@ export default function FastBookForm() {
             <input 
               type="date" 
               name="requestedDate"
-              className="w-full rounded-lg border-gray-300 border px-4 py-3 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50 transition-colors"
+              className="w-full rounded-lg border-gray-300 border px-4 py-3 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50 transition-colors bg-white"
               value={formData.requestedDate}
               onChange={handleChange}
+              min={todayDate}
               required
             />
           </div>
@@ -130,9 +172,9 @@ export default function FastBookForm() {
                 <Clock className="w-4 h-4 text-tps-orange" /> Waktu Mulai
               </label>
               <input 
-                type="time" 
+                type="time"
                 name="startTime"
-                className="w-full rounded-lg border-gray-300 border px-4 py-3 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50 transition-colors"
+                className="w-full rounded-lg border-gray-300 border px-4 py-3 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50 transition-colors bg-white"
                 value={formData.startTime}
                 onChange={handleChange}
                 required
@@ -143,9 +185,9 @@ export default function FastBookForm() {
                 <Clock className="w-4 h-4 text-tps-orange" /> Waktu Selesai
               </label>
               <input 
-                type="time" 
+                type="time"
                 name="endTime"
-                className="w-full rounded-lg border-gray-300 border px-4 py-3 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50 transition-colors"
+                className="w-full rounded-lg border-gray-300 border px-4 py-3 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50 transition-colors bg-white"
                 value={formData.endTime}
                 onChange={handleChange}
                 required
