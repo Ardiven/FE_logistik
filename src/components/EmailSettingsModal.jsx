@@ -6,6 +6,7 @@ const EmailSettingsModal = ({ isOpen, onClose }) => {
   const [subject, setSubject] = useState('');
   const [html, setHtml] = useState('');
   const [isEnabled, setIsEnabled] = useState(true);
+  const [isH3Enabled, setIsH3Enabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -27,6 +28,7 @@ const EmailSettingsModal = ({ isOpen, onClose }) => {
         const rawHtml = res.data.data.FRIDAY_EMAIL_HTML || '';
         setHtml(rawHtml.replace(/>\s*</g, '>\n<'));
         setIsEnabled(res.data.data.IS_FRIDAY_EMAIL_ENABLED !== 'false');
+        setIsH3Enabled(res.data.data.IS_H3_RESTRICTION_ENABLED !== 'false');
       }
     } catch (err) {
       setError(err.response?.data?.error || 'Gagal memuat pengaturan.');
@@ -43,7 +45,8 @@ const EmailSettingsModal = ({ isOpen, onClose }) => {
       await updateSettings({
         FRIDAY_EMAIL_SUBJECT: subject,
         FRIDAY_EMAIL_HTML: html,
-        IS_FRIDAY_EMAIL_ENABLED: isEnabled ? 'true' : 'false'
+        IS_FRIDAY_EMAIL_ENABLED: isEnabled ? 'true' : 'false',
+        IS_H3_RESTRICTION_ENABLED: isH3Enabled ? 'true' : 'false'
       });
       setSuccess(true);
       setTimeout(() => {
@@ -65,8 +68,8 @@ const EmailSettingsModal = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Pengaturan Email Jumat</h2>
-            <p className="text-sm text-gray-500 mt-1">Ubah subjek dan isi pesan otomatis email hari Jumat</p>
+            <h2 className="text-xl font-bold text-gray-900">Pengaturan Sistem</h2>
+            <p className="text-sm text-gray-500 mt-1">Ubah konfigurasi email otomatis dan pengaturan sistem lainnya</p>
           </div>
           <button 
             onClick={onClose}
@@ -97,20 +100,38 @@ const EmailSettingsModal = ({ isOpen, onClose }) => {
             <div>
               <form id="settings-form" onSubmit={handleSave} className="space-y-6">
                 
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
-                  <div>
-                    <h3 className="text-sm font-semibold text-gray-900">Status Pengiriman</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">Kirim email pengingat pada hari Jumat ini.</p>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900">Aturan H-3 Peminjaman</h3>
+                      <p className="text-xs text-gray-500 mt-0.5">Wajibkan peminjaman maksimal H-3 sebelum pelaksanaan.</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={isH3Enabled}
+                        onChange={(e) => setIsH3Enabled(e.target.checked)}
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tps-orange"></div>
+                    </label>
                   </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="sr-only peer" 
-                      checked={isEnabled}
-                      onChange={(e) => setIsEnabled(e.target.checked)}
-                    />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tps-orange"></div>
-                  </label>
+
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900">Status Email Jumat</h3>
+                      <p className="text-xs text-gray-500 mt-0.5">Kirim email pengingat pada hari Jumat ini.</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={isEnabled}
+                        onChange={(e) => setIsEnabled(e.target.checked)}
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tps-orange"></div>
+                    </label>
+                  </div>
                 </div>
 
                 <div className="space-y-2">

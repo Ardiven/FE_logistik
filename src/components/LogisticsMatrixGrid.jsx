@@ -87,7 +87,7 @@ export default function LogisticsMatrixGrid() {
         <div className="flex items-center gap-3">
           {(user?.teamRole === 'BPH' || user?.teamRole === 'BPHK') && (
             <button onClick={() => setIsSettingsOpen(true)} className="p-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2">
-              <Settings className="w-4 h-4" /> <span className="text-sm font-semibold pr-1">Pengaturan Email</span>
+              <Settings className="w-4 h-4" /> <span className="text-sm font-semibold pr-1">Pengaturan Sistem</span>
             </button>
           )}
           <button onClick={fetchMatrix} className="p-2 bg-tps-orange text-white rounded-lg hover:bg-orange-600 transition-colors flex items-center gap-2">
