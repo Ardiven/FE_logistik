@@ -23,5 +23,5 @@ export const rejectRoom = (id, data) => API.patch(`/logistics/requests/${id}/rej
 export const processRoom = (id) => API.patch(`/logistics/requests/${id}/process`);
 export const getMyRequests = () => API.get('/requests/my');
 
-export const getSettings = () => API.get('/settings');
+export const getSettings = () => API.get(`/settings?_t=${Date.now()}`);
 export const updateSettings = (data) => API.put('/settings', data);
