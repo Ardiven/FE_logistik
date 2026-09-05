@@ -143,8 +143,11 @@ export default function FastBookForm() {
                 <Clock className="w-4 h-4 text-tps-orange" /> Waktu Mulai
               </label>
               <input 
-                type="time"
+                type="text"
                 name="startTime"
+                placeholder="08:00"
+                pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
+                title="Format waktu HH:MM (contoh: 08:00)"
                 className="w-full rounded-lg border-gray-300 border px-4 py-3 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50 transition-colors bg-white"
                 value={formData.startTime}
                 onChange={handleChange}
@@ -156,8 +159,11 @@ export default function FastBookForm() {
                 <Clock className="w-4 h-4 text-tps-orange" /> Waktu Selesai
               </label>
               <input 
-                type="time"
+                type="text"
                 name="endTime"
+                placeholder="10:00"
+                pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
+                title="Format waktu HH:MM (contoh: 10:00)"
                 className="w-full rounded-lg border-gray-300 border px-4 py-3 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50 transition-colors bg-white"
                 value={formData.endTime}
                 onChange={handleChange}

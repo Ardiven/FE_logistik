@@ -8,13 +8,13 @@ import MyRequests from './pages/MyRequests';
 
 const PrivateRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useContext(AuthContext);
-  
+
   if (loading) return <div className="flex h-screen items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tps-orange"></div></div>;
   if (!user) return <Navigate to="/login" replace />;
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <div className="text-center mt-20 text-xl font-bold">Akses Ditolak. Anda tidak memiliki izin untuk halaman ini.</div>;
   }
-  
+
   return children;
 };
 
@@ -28,7 +28,7 @@ const Navigation = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center space-x-2 sm:space-x-4 overflow-hidden">
             <a href="https://tps.petra.ac.id" className="flex-shrink-0 flex items-center gap-2 cursor-pointer">
-              <img src="/tps.png" alt="TPS Logo" className="h-8 sm:h-10 w-auto" />
+              <img src="assets/tps.png" alt="TPS Logo" className="h-8 sm:h-10 w-auto" />
               <span className="font-bold text-sm sm:text-xl text-black whitespace-nowrap">Tim Petra Sinergi</span>
             </a>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
@@ -53,7 +53,7 @@ const Navigation = () => {
             {user ? (
               <>
                 <span className="text-xs sm:text-sm text-gray-600 font-medium truncate max-w-[100px] sm:max-w-xs">Hi, {user.name}</span>
-                <button 
+                <button
                   onClick={logout}
                   className="text-xs sm:text-sm font-medium text-red-600 hover:text-red-800 transition-colors bg-red-50 hover:bg-red-100 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg"
                 >
