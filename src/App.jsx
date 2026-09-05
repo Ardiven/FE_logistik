@@ -28,7 +28,7 @@ const Navigation = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center space-x-2 sm:space-x-4 overflow-hidden">
             <a href="https://tps.petra.ac.id" className="flex-shrink-0 flex items-center gap-2 cursor-pointer">
-              <img src="assets/tps.png" alt="TPS Logo" className="h-8 sm:h-10 w-auto" />
+              <img src="tps.png" alt="TPS Logo" className="h-8 sm:h-10 w-auto" />
               <span className="font-bold text-sm sm:text-xl text-black whitespace-nowrap">Tim Petra Sinergi</span>
             </a>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
