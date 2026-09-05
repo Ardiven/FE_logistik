@@ -25,42 +25,13 @@ export default function FastBookForm() {
     const group = groups.find(g => g.id === parseInt(e.target.value));
     setSelectedGroup(group || null);
 
-    if (group && group.defaultDay !== null && group.defaultTime !== null) {
-      const rawDay = parseInt(group.defaultDay);
-      const jsDay = rawDay === 7 ? 0 : rawDay;
-      
-      const targetDate = new Date();
-      targetDate.setDate(targetDate.getDate() + 3); // Min H-3
-      
-      while (targetDate.getDay() !== jsDay) {
-        targetDate.setDate(targetDate.getDate() + 1);
-      }
-      
-      const year = targetDate.getFullYear();
-      const month = String(targetDate.getMonth() + 1).padStart(2, '0');
-      const day = String(targetDate.getDate()).padStart(2, '0');
-      const dateStr = `${year}-${month}-${day}`;
-      const startTimeStr = group.defaultTime.substring(0, 5);
-      
-      let endHour = parseInt(startTimeStr.split(':')[0]) + 2;
-      let endMinute = startTimeStr.split(':')[1];
-      if (endHour >= 24) endHour -= 24;
-      const endTimeStr = `${endHour.toString().padStart(2, '0')}:${endMinute}`;
-      
-      setFormData(prev => ({
-        ...prev,
-        requestedDate: dateStr,
-        startTime: startTimeStr,
-        endTime: endTimeStr
-      }));
-    } else if (group) {
-      setFormData(prev => ({
-        ...prev,
-        requestedDate: '',
-        startTime: '',
-        endTime: ''
-      }));
-    }
+    // Reset isi form ketika ganti kelompok (fitur auto-isi dihapus agar tidak freeze)
+    setFormData(prev => ({
+      ...prev,
+      requestedDate: '',
+      startTime: '',
+      endTime: ''
+    }));
   };
 
   const handleChange = (e) => {
