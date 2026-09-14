@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://tps.petra.ac.id/api',
-  // baseURL: 'http://localhost:3000/api',
+  // baseURL: 'https://tps.petra.ac.id/api',
+  baseURL: 'http://localhost:3000/api',
 });
 
 API.interceptors.request.use((config) => {
@@ -25,3 +25,8 @@ export const getMyRequests = () => API.get('/requests/my');
 
 export const getSettings = () => API.get(`/settings?_t=${Date.now()}`);
 export const updateSettings = (data) => API.put('/settings', data);
+
+export const getAdminMaterials = () => API.get('/admin/materials');
+export const getAdminDashboardStats = (materiId) => API.get(`/admin/dashboard${materiId ? `?materiId=${materiId}` : ''}`);
+export const getAdminPresensi = (materiId) => API.get(`/admin/presensi/${materiId}`);
+export const getAdminAssessment = (materiId) => API.get(`/admin/assessment/${materiId}`);

@@ -5,6 +5,7 @@ import FastBookForm from './components/FastBookForm';
 import LogisticsMatrixGrid from './components/LogisticsMatrixGrid';
 import Login from './pages/Login';
 import MyRequests from './pages/MyRequests';
+import AdminDashboard from './pages/AdminDashboard';
 
 const PrivateRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useContext(AuthContext);
@@ -42,9 +43,14 @@ const Navigation = () => {
                   </Link>
                 </>
               )}
-              {user?.role === 'LOGISTIK' && (
-                <Link to="/logistics" className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-tps-orange text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
+              {(user?.role === 'LOGISTIK' || user?.role === 'BPH_OFFICE') && (
+                <Link to="/logistics" className={`inline-flex items-center px-1 pt-1 border-b-2 ${location.pathname === '/logistics' ? 'border-tps-orange text-gray-900' : 'border-transparent text-gray-700'} hover:border-tps-orange text-sm font-medium hover:text-gray-900 transition-colors`}>
                   Dashboard Logistik
+                </Link>
+              )}
+              {(user?.role === 'BPH' || user?.role === 'BPH_OFFICE') && (
+                <Link to="/admin" className={`inline-flex items-center px-1 pt-1 border-b-2 ${location.pathname === '/admin' ? 'border-tps-orange text-gray-900' : 'border-transparent text-gray-700'} hover:border-tps-orange text-sm font-medium hover:text-gray-900 transition-colors`}>
+                  Dashboard Admin
                 </Link>
               )}
             </div>
@@ -83,7 +89,8 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<PrivateRoute allowedRoles={['KETUA_KELOMPOK', 'MENTOR']}><FastBookForm /></PrivateRoute>} />
               <Route path="/my-requests" element={<PrivateRoute allowedRoles={['KETUA_KELOMPOK', 'MENTOR']}><MyRequests /></PrivateRoute>} />
-              <Route path="/logistics" element={<PrivateRoute allowedRoles={['LOGISTIK']}><LogisticsMatrixGrid /></PrivateRoute>} />
+              <Route path="/logistics" element={<PrivateRoute allowedRoles={['LOGISTIK', 'BPH_OFFICE']}><LogisticsMatrixGrid /></PrivateRoute>} />
+              <Route path="/admin" element={<PrivateRoute allowedRoles={['BPH', 'BPH_OFFICE']}><AdminDashboard /></PrivateRoute>} />
             </Routes>
           </main>
         </div>

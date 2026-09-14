@@ -21,7 +21,8 @@ const Login = () => {
         const result = await login(nrp, password, role);
         
         if (result.success) {
-            navigate(role === 'LOGISTIK' ? '/logistics' : '/');
+            const actualRole = result.user.role;
+            navigate(actualRole === 'LOGISTIK' ? '/logistics' : (actualRole === 'BPH' || actualRole === 'BPH_OFFICE') ? '/admin' : '/');
         } else {
             setError(result.message);
         }
@@ -74,7 +75,7 @@ const Login = () => {
                                     >
                                         <option value="KETUA_KELOMPOK">Ketua Kelompok</option>
                                         <option value="MENTOR">Mentor</option>
-                                        <option value="LOGISTIK">Tim Logistik</option>
+                                        <option value="TIM">Tim / Panitia</option>
                                     </select>
                                 </div>
                             </div>
