@@ -17,3 +17,17 @@
 .btn-primary {
   @apply bg-tps-orange text-white px-6 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors shadow-md active:scale-95 duration-200;
 }
+
+/* Fix SweetAlert2 buttons missing/unstyled */
+.swal2-actions {
+  display: flex !important;
+}
+.swal2-confirm {
+  @apply bg-tps-orange text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-600 !important;
+}
+.swal2-cancel {
+  @apply bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-400 !important;
+}
+.swal2-deny {
+  @apply bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 !important;
+}

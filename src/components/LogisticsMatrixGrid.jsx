@@ -46,7 +46,6 @@ export default function LogisticsMatrixGrid() {
       showCancelButton: true,
       confirmButtonText: 'Tolak',
       cancelButtonText: 'Batal',
-      confirmButtonColor: '#f44336',
       inputValidator: (value) => {
         if (!value || value.trim() === '') {
           return 'Alasan penolakan wajib diisi!'
