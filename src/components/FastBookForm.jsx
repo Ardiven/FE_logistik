@@ -66,7 +66,7 @@ export default function FastBookForm() {
     } catch (err) {
       setMessage({ 
         type: 'error', 
-        text: err.response?.data?.error || "Terjadi kesalahan pada server." 
+        text: err.response?.data?.error || err.response?.data?.message || err.message || "Terjadi kesalahan pada server." 
       });
     } finally {
       setLoading(false);

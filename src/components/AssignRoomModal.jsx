@@ -53,23 +53,16 @@ export default function AssignRoomModal({ request, onClose, onSuccess }) {
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Pilih Ruangan <span className="text-red-500">*</span>
+                Ruangan <span className="text-red-500">*</span>
               </label>
-              <select
+              <input
+                type="text"
                 value={assignedRoom}
                 onChange={(e) => setAssignedRoom(e.target.value)}
+                placeholder="Masukkan nama ruangan..."
                 className="w-full rounded-lg border-gray-300 border px-4 py-3 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50 bg-white"
                 required
-              >
-                <option value="">-- Pilih Ruangan --</option>
-                <option value="W101">Ruang W101</option>
-                <option value="W102">Ruang W102</option>
-                <option value="W103">Ruang W103</option>
-                <option value="T301">Ruang T301</option>
-                <option value="T302">Ruang T302</option>
-                <option value="RK1">Ruang RK1</option>
-                <option value="RK2">Ruang RK2</option>
-              </select>
+              />
             </div>
 
             <div className="pt-2 flex gap-3">
