@@ -65,6 +65,19 @@ export default function AssignRoomModal({ request, onClose, onSuccess }) {
               />
             </div>
 
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Catatan / Keterangan (Opsional)
+              </label>
+              <textarea
+                value={logisticsNotes}
+                onChange={(e) => setLogisticsNotes(e.target.value)}
+                placeholder="Masukkan catatan jika ada..."
+                className="w-full rounded-lg border-gray-300 border px-4 py-3 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50 bg-white"
+                rows="3"
+              />
+            </div>
+
             <div className="pt-2 flex gap-3">
               <button
                 type="button"
