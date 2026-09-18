@@ -82,7 +82,7 @@ export default function AssignRoomModal({ request, onClose, onSuccess }) {
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 btn-secondary text-gray-700 hover:bg-gray-200 py-3 rounded-lg font-semibold flex justify-center items-center gap-2"
+                className="flex-1 bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200 py-3 rounded-lg font-semibold flex justify-center items-center gap-2 transition-colors"
                 disabled={loading}
               >
                 <X className="w-4 h-4" /> Batal
