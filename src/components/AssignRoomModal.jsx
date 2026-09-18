@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Check } from 'lucide-react';
 import { assignRoom } from '../services/api';
 import Swal from 'sweetalert2';
+import FullScreenLoader from './FullScreenLoader';
 
 export default function AssignRoomModal({ request, onClose, onSuccess }) {
   const [assignedRoom, setAssignedRoom] = useState('');
@@ -22,66 +24,75 @@ export default function AssignRoomModal({ request, onClose, onSuccess }) {
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative">
+  return createPortal(
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[9000]">
+      {loading && <FullScreenLoader text="Sedang menyimpan penetapan ruangan..." />}
+      <div className="bg-white rounded-2xl max-w-md w-full shadow-xl overflow-hidden relative">
         <div className="bg-tps-orange px-6 py-4 flex justify-between items-center text-white">
           <h3 className="font-bold text-lg">Assign Ruangan</h3>
           <button onClick={onClose} className="hover:bg-white/20 p-1 rounded-full transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
-        
-        <div className="p-6">
-          <div className="mb-4 text-sm text-gray-600 bg-tps-cream p-3 rounded-lg border border-tps-yellow">
-            <p><strong>Kelompok:</strong> {request.groupName}</p>
-            <p><strong>Tanggal:</strong> {new Date(request.requestedDate).toLocaleDateString('id-ID')}</p>
-            <p><strong>Waktu:</strong> {request.startTime} - {request.endTime}</p>
-          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="p-6">
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Ruangan yang Ditetapkan</label>
-              <input 
-                type="text" 
-                className="w-full rounded-lg border-gray-300 border px-4 py-2.5 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50"
-                placeholder="Cth: P.305"
-                value={assignedRoom}
-                onChange={e => setAssignedRoom(e.target.value)}
-                required
-              />
+              <label className="block text-sm font-semibold text-gray-700 mb-1">KTB</label>
+              <div className="text-gray-900 bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
+                Kelompok {request.groupName}
+              </div>
             </div>
-            
+
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Catatan Logistik (Opsional)</label>
-              <textarea 
-                className="w-full rounded-lg border-gray-300 border px-4 py-2.5 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50"
-                placeholder="Cth: Ambil kunci di pos satpam"
-                rows="2"
-                value={logisticsNotes}
-                onChange={e => setLogisticsNotes(e.target.value)}
-              ></textarea>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Jadwal</label>
+              <div className="text-gray-900 bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
+                {new Date(request.requestedDate).toLocaleDateString('id-ID')} ({request.startTime} - {request.endTime})
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Pilih Ruangan <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={assignedRoom}
+                onChange={(e) => setAssignedRoom(e.target.value)}
+                className="w-full rounded-lg border-gray-300 border px-4 py-3 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50 bg-white"
+                required
+              >
+                <option value="">-- Pilih Ruangan --</option>
+                <option value="W101">Ruang W101</option>
+                <option value="W102">Ruang W102</option>
+                <option value="W103">Ruang W103</option>
+                <option value="T301">Ruang T301</option>
+                <option value="T302">Ruang T302</option>
+                <option value="RK1">Ruang RK1</option>
+                <option value="RK2">Ruang RK2</option>
+              </select>
             </div>
 
             <div className="pt-2 flex gap-3">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-2 rounded-lg font-semibold text-gray-600 hover:bg-gray-100 transition-colors"
+                className="flex-1 btn-secondary text-gray-700 hover:bg-gray-200 py-3 rounded-lg font-semibold flex justify-center items-center gap-2"
+                disabled={loading}
               >
-                Batal
+                <X className="w-4 h-4" /> Batal
               </button>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={loading || !assignedRoom}
                 className="flex-1 btn-primary flex justify-center items-center gap-2"
               >
-                {loading ? 'Menyimpan...' : <><Check className="w-4 h-4" /> Tetapkan</>}
+                <Check className="w-4 h-4" /> Tetapkan
               </button>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -6,11 +6,12 @@ import LogisticsMatrixGrid from './components/LogisticsMatrixGrid';
 import Login from './pages/Login';
 import MyRequests from './pages/MyRequests';
 import AdminDashboard from './pages/AdminDashboard';
+import LoadingAnimation from './components/LoadingAnimation';
 
 const PrivateRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useContext(AuthContext);
 
-  if (loading) return <div className="flex h-screen items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tps-orange"></div></div>;
+  if (loading) return <div className="flex h-screen items-center justify-center"><LoadingAnimation /></div>;
   if (!user) return <Navigate to="/login" replace />;
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <div className="text-center mt-20 text-xl font-bold">Akses Ditolak. Anda tidak memiliki izin untuk halaman ini.</div>;

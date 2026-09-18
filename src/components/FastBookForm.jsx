@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getGroups, submitRequest } from '../services/api';
 import { Calendar, Clock, Users, FileText, CheckCircle, AlertCircle } from 'lucide-react';
+import FullScreenLoader from './FullScreenLoader';
 
 export default function FastBookForm() {
   const [groups, setGroups] = useState([]);
@@ -97,9 +98,12 @@ export default function FastBookForm() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6 relative">
+          {loading && <FullScreenLoader text="Sedang mengajukan permohonan..." />}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">Pilih Kelompok KTB</label>
+            <label className="block text-sm font-semibold text-gray-700">
+              Pilih Kelompok KTB Anda <span className="text-red-500">*</span>
+            </label>
             <select 
               className="w-full rounded-lg border-gray-300 border px-4 py-3 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50 transition-colors bg-white/50" 
               onChange={handleGroupChange}
@@ -179,7 +183,7 @@ export default function FastBookForm() {
             disabled={loading || !selectedGroup}
             className="w-full btn-primary py-3 text-lg flex justify-center items-center gap-2 mt-4"
           >
-            {loading ? 'Mengirim...' : 'Ajukan Permohonan'}
+            Ajukan Permohonan
           </button>
         </form>
       </div>

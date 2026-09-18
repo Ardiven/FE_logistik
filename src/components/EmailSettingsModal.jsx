@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, AlertCircle } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import { getSettings, updateSettings } from '../services/api';
+import { Settings, X, Save, ShieldAlert, Mail, AlertCircle, Send } from 'lucide-react';
+import FullScreenLoader from './FullScreenLoader';
 
 const EmailSettingsModal = ({ isOpen, onClose }) => {
   const [subject, setSubject] = useState('');
   const [html, setHtml] = useState('');
   const [isEnabled, setIsEnabled] = useState(true);
   const [isH3Enabled, setIsH3Enabled] = useState(true);
+  const [googleSheetsId, setGoogleSheetsId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -29,6 +32,7 @@ const EmailSettingsModal = ({ isOpen, onClose }) => {
         setHtml(rawHtml.replace(/>\s*</g, '>\n<'));
         setIsEnabled(res.data.data.IS_FRIDAY_EMAIL_ENABLED !== 'false');
         setIsH3Enabled(res.data.data.IS_H3_RESTRICTION_ENABLED !== 'false');
+        setGoogleSheetsId(res.data.data.GOOGLE_SHEETS_ID || '');
       }
     } catch (err) {
       setError(err.response?.data?.error || 'Gagal memuat pengaturan.');
@@ -46,7 +50,8 @@ const EmailSettingsModal = ({ isOpen, onClose }) => {
         FRIDAY_EMAIL_SUBJECT: subject,
         FRIDAY_EMAIL_HTML: html,
         IS_FRIDAY_EMAIL_ENABLED: isEnabled ? 'true' : 'false',
-        IS_H3_RESTRICTION_ENABLED: isH3Enabled ? 'true' : 'false'
+        IS_H3_RESTRICTION_ENABLED: isH3Enabled ? 'true' : 'false',
+        GOOGLE_SHEETS_ID: googleSheetsId
       });
       setSuccess(true);
       setTimeout(() => {
@@ -61,9 +66,10 @@ const EmailSettingsModal = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl w-full max-w-5xl shadow-xl flex flex-col max-h-[90vh]">
+  return createPortal(
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9000] flex items-center justify-center p-4">
+      {isLoading && <FullScreenLoader text="Sedang menyimpan pengaturan..." />}
+      <div className="bg-white rounded-2xl w-full max-w-5xl shadow-xl flex flex-col max-h-[90vh] relative">
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
@@ -171,6 +177,29 @@ const EmailSettingsModal = ({ isOpen, onClose }) => {
                   />
                 </div>
 
+                <div className="space-y-2 border-t pt-4">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    Google Spreadsheet ID (Untuk Export)
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">Masukkan ID dari URL Spreadsheet. Contoh: jika URL <code>https://docs.google.com/spreadsheets/d/1BxiMVs0X.../edit</code>, ID-nya adalah <code>1BxiMVs0X...</code></p>
+                  <input 
+                    type="text"
+                    value={googleSheetsId}
+                    onChange={(e) => setGoogleSheetsId(e.target.value)}
+                    className="w-full rounded-lg border-gray-300 border px-4 py-3 focus:border-tps-orange focus:ring focus:ring-tps-orange focus:ring-opacity-50"
+                    placeholder="1BxiMVs0X..."
+                  />
+                  <div className="bg-yellow-50 text-yellow-800 p-4 rounded-xl border border-yellow-100 text-xs mt-3">
+                    <p className="font-semibold mb-2 flex items-center gap-1.5"><AlertCircle className="w-4 h-4"/> Instruksi Wajib (Setup Google Sheets):</p>
+                    <ol className="list-decimal ml-5 space-y-1.5 text-yellow-700">
+                      <li>Buka file Spreadsheet target Anda, lalu klik tombol <b>Share (Bagikan)</b> di pojok kanan atas.</li>
+                      <li>Masukkan alamat email dari <i>Service Account</i> Anda (bisa dilihat dari `client_email` di dalam JSON kredensial), dan pastikan berikan akses sebagai <b>Editor</b>.</li>
+                      <li>Buat 2 buah tab/lembar (sheet) baru di file tersebut dengan nama yang persis sama dengan: <b>Absen</b> dan <b>Assessment</b>. (Pastikan huruf kapitalnya sesuai).</li>
+                      <li>Data akan otomatis tertimpa di tab-tab tersebut saat tombol Export ditekan dari menu Admin.</li>
+                    </ol>
+                  </div>
+                </div>
+
               </form>
             </div>
 
@@ -213,12 +242,13 @@ const EmailSettingsModal = ({ isOpen, onClose }) => {
             className="px-6 py-2.5 text-sm font-semibold text-white bg-tps-orange hover:bg-orange-600 rounded-xl transition-colors flex items-center gap-2 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
-            {isLoading ? 'Menyimpan...' : 'Simpan Pengaturan'}
+            Simpan Pengaturan
           </button>
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getMyRequests } from '../services/api';
 import { CheckCircle, Clock, XCircle, AlertCircle, FileText, MapPin } from 'lucide-react';
+import LoadingAnimation from '../components/LoadingAnimation';
 
 export default function MyRequests() {
   const [requests, setRequests] = useState([]);
@@ -51,7 +52,7 @@ export default function MyRequests() {
   if (loading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-tps-orange"></div>
+        <LoadingAnimation />
       </div>
     );
   }

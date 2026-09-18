@@ -2,6 +2,8 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { KeyRound, User, Briefcase } from 'lucide-react';
+import LoadingAnimation from '../components/LoadingAnimation';
+import FullScreenLoader from '../components/FullScreenLoader';
 
 const Login = () => {
     const [nrp, setNrp] = useState('');
@@ -31,7 +33,8 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+            {isLoading && <FullScreenLoader text="Sedang masuk..." />}
             <div className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-tps-cream/50">
                 <div className="bg-tps-orange py-6 px-8 text-center">
                     <h2 className="text-3xl font-extrabold text-white tracking-tight">
@@ -127,14 +130,9 @@ const Login = () => {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-lg text-white bg-tps-orange hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tps-orange transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-tps-orange hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tps-orange transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                             >
-                                {isLoading ? (
-                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                ) : 'Masuk'}
+                                Masuk ke Sistem
                             </button>
                         </div>
                     </form>

@@ -5,6 +5,7 @@ import { Calendar, Search, MapPin, Clock, User, Lock, Settings } from 'lucide-re
 import Swal from 'sweetalert2';
 import { AuthContext } from '../context/AuthContext';
 import EmailSettingsModal from './EmailSettingsModal';
+import LoadingAnimation from './LoadingAnimation';
 
 export default function LogisticsMatrixGrid() {
   const { user } = useContext(AuthContext);
@@ -97,7 +98,7 @@ export default function LogisticsMatrixGrid() {
 
       {loading ? (
         <div className="flex justify-center p-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-tps-yellow border-t-tps-orange"></div>
+          <LoadingAnimation />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
