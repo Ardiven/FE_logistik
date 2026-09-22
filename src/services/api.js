@@ -32,3 +32,5 @@ export const getAdminMaterials = () => API.get('/admin/materials');
 export const getAdminDashboardStats = (materiId) => API.get(`/admin/dashboard${materiId ? `?materiId=${materiId}` : ''}`);
 export const getAdminPresensi = (materiId) => API.get(`/admin/presensi/${materiId}`);
 export const getAdminAssessment = (materiId) => API.get(`/admin/assessment/${materiId}`);
+export const getAdminVideoBriefingProgress = () => API.get('/admin/video-briefing-progress');
+

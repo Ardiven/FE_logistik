@@ -32,9 +32,6 @@ export default function LogisticsMatrixGrid() {
 
   const handleAssignSuccess = (data) => {
     setSelectedRequest(null);
-    if (data.whatsappNotificationUrl) {
-      window.open(data.whatsappNotificationUrl, '_blank');
-    }
     fetchMatrix();
   };
 

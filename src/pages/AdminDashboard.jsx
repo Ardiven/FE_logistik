@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { getAdminMaterials, getAdminDashboardStats, getAdminPresensi, getAdminAssessment, exportToGoogleSheets } from '../services/api';
+import { getAdminMaterials, getAdminDashboardStats, getAdminPresensi, getAdminAssessment, exportToGoogleSheets, getAdminVideoBriefingProgress } from '../services/api';
 import { Users, FileText, Video, LayoutDashboard, Download } from 'lucide-react';
 import Swal from 'sweetalert2';
 import EmailSettingsModal from '../components/EmailSettingsModal';
@@ -14,11 +14,14 @@ const AdminDashboard = () => {
     const [stats, setStats] = useState({ presensiCount: 0, assessmentCount: 0 });
     const [presensiList, setPresensiList] = useState([]);
     const [assessmentList, setAssessmentList] = useState([]);
+    const [videoBriefingData, setVideoBriefingData] = useState([]);
+    const [videoBriefingCols, setVideoBriefingCols] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [exportType, setExportType] = useState('absen');
     const [exportLoading, setExportLoading] = useState(false);
+    const [selectedVideoCol, setSelectedVideoCol] = useState('');
 
     const handleExport = async () => {
         try {
@@ -88,12 +91,31 @@ const AdminDashboard = () => {
             setLoading(false);
         };
 
+        const fetchVideoBriefing = async () => {
+            setLoading(true);
+            try {
+                const { data } = await getAdminVideoBriefingProgress();
+                if (data.success) {
+                    setVideoBriefingData(data.data);
+                    setVideoBriefingCols(data.columns);
+                    if (data.columns.length > 0) {
+                        setSelectedVideoCol(data.columns[0]);
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching video briefing", error);
+            }
+            setLoading(false);
+        };
+
         if (activeTab === 'dashboard') {
             fetchStats();
         } else if (activeTab === 'presensi') {
             fetchPresensi();
         } else if (activeTab === 'assessment') {
             fetchAssessment();
+        } else if (activeTab === 'video') {
+            fetchVideoBriefing();
         }
     }, [selectedLeg, activeTab]);
 
@@ -168,10 +190,89 @@ const AdminDashboard = () => {
             ) : (
                 <>
                     {activeTab === 'video' && (
-                        <div className="bg-white p-12 rounded-2xl shadow-sm border border-gray-100 text-center">
-                            <Video className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-                            <h3 className="text-xl font-bold text-gray-500">Video Briefing</h3>
-                            <p className="text-gray-400 mt-2">Konten Video Briefing akan diimplementasikan di sini</p>
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <h3 className="font-bold text-tps-dark flex items-center gap-2">
+                                    <Video className="w-5 h-5 text-tps-orange" />
+                                    Daftar Kehadiran Video Briefing Astor
+                                </h3>
+                                {videoBriefingCols.length > 0 && (
+                                    <select
+                                        value={selectedVideoCol}
+                                        onChange={(e) => setSelectedVideoCol(e.target.value)}
+                                        className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-tps-orange transition-colors text-sm"
+                                    >
+                                        {videoBriefingCols.map((col, idx) => (
+                                            <option key={idx} value={col}>{col}</option>
+                                        ))}
+                                    </select>
+                                )}
+                            </div>
+                            <div className="p-0 overflow-x-auto">
+                                {videoBriefingData.length === 0 ? (
+                                    <div className="text-center text-gray-500 py-12 flex flex-col items-center justify-center">
+                                        <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4">
+                                            <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                                        </div>
+                                        <p className="text-lg font-medium text-tps-dark">Tidak ada data Video Briefing</p>
+                                    </div>
+                                ) : (
+                                    <table className="w-full text-sm text-left">
+                                        <thead className="bg-gray-50 text-gray-600 border-b border-gray-100">
+                                            <tr>
+                                                <th className="px-6 py-3 font-semibold">NRP</th>
+                                                <th className="px-6 py-3 font-semibold">Nama</th>
+                                                {videoBriefingCols.filter(col => col === selectedVideoCol).map((col, idx) => (
+                                                    <React.Fragment key={idx}>
+                                                        <th className="px-6 py-3 font-semibold">{col} (Status)</th>
+                                                        <th className="px-6 py-3 font-semibold">Posisi Terakhir</th>
+                                                        <th className="px-6 py-3 font-semibold">Real Watch</th>
+                                                    </React.Fragment>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-100">
+                                            {videoBriefingData.filter(row => {
+                                                const activeCols = videoBriefingCols.filter(col => col === selectedVideoCol);
+                                                return activeCols.some(col => row[col] && (row[col].status === 'Not Watched' || row[col].status === 'Watched'));
+                                            }).map((row, idx) => (
+                                                <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                                                    <td className="px-6 py-4 font-medium text-gray-900">{row.nrp}</td>
+                                                    <td className="px-6 py-4 text-gray-600">{row.nama}</td>
+                                                    {videoBriefingCols.filter(col => col === selectedVideoCol).map((col, colIdx) => {
+                                                        const dataCol = row[col] || { status: '-', posisi_terakhir: '-', real_watch: '-' };
+                                                        return (
+                                                            <React.Fragment key={colIdx}>
+                                                                <td className="px-6 py-4">
+                                                                    {dataCol.status === 'Watched' ? (
+                                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                                            Watched
+                                                                        </span>
+                                                                    ) : dataCol.status === 'Not Watched' ? (
+                                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                                            Not Watched
+                                                                        </span>
+                                                                    ) : dataCol.status === 'Hadir' ? (
+                                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                                            Hadir
+                                                                        </span>
+                                                                    ) : (
+                                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                                            {dataCol.status}
+                                                                        </span>
+                                                                    )}
+                                                                </td>
+                                                                <td className="px-6 py-4 text-gray-600 font-medium whitespace-nowrap">{dataCol.posisi_terakhir}</td>
+                                                                <td className="px-6 py-4 text-gray-600 font-medium whitespace-nowrap">{dataCol.real_watch}</td>
+                                                            </React.Fragment>
+                                                        );
+                                                    })}
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                )}
+                            </div>
                         </div>
                     )}
 
